@@ -111,16 +111,16 @@ void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_
 	unsigned long buffer_head;  // the head of the buffer in which to store the message
 
 								// find the element of the buffer in which to store the message
-	if (buffer_length >= BUFFER_LENGTH) {
-		buffer_head = buffer_tail + buffer_length - BUFFER_LENGTH;
+	if (*buffer_length > BUFFER_LENGTH) {
+		buffer_head = *buffer_tail + *buffer_length - BUFFER_LENGTH;
 		buffer_tail++;
 	}
 	else {
-		if (BUFFER_LENGTH < (buffer_tail + buffer_length)) {
-			buffer_head = buffer_tail + buffer_length - BUFFER_LENGTH;
+		if (BUFFER_LENGTH < (*buffer_tail + *buffer_length)) {
+			buffer_head = *buffer_tail + *buffer_length - BUFFER_LENGTH;
 		}
 		else {
-			buffer_head = buffer_length + buffer_tail;
+			buffer_head = *buffer_length + *buffer_tail;
 		}
 	}
 		// get the value of the data for the message from the user
@@ -133,7 +133,7 @@ void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_
 	buffer[buffer_head].time = current_time;
 
 		// if no buffer overflow has occurred, adjust the buffer length
-		if (BUFFER_LENGTH > buffer_length) {
+		if (BUFFER_LENGTH > *buffer_length) {
 			buffer_length++;
 		}
 
@@ -152,7 +152,7 @@ void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_
 //   (2) position of the tail of the buffer
 //   (3) number of messages in the buffer
 // Returns: void
-void Consume(Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length);
+void Consume(struct Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length);
 {
 	// if the buffer is empty, display an error statement
 	if (buffer_length == 0) {
@@ -193,7 +193,7 @@ void Show(Message buffer[BUFFER_LENGTH], unsigned long buffer_tail, unsigned lon
 
 		// if the buffer is not empty, display all the messages in the buffer
 	else {
-		for (count = 0, count < BUFFER_LENGTH; count++) {
+		for (count = 0, count < BUFFER_LENGTH; count++;) {
 			cout << "The messages in the buffer are as follows: " << endl;
 			cout << buffer[count].data << endl;
 		}
