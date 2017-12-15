@@ -25,6 +25,7 @@
 // message is entered, this simply overwrites the last message at the tail of the buffer. 
 // This is termed an overflow.
 
+#include "stdafx.h"
 #include <iostream>
 #include <time.h>
 using namespace std;
@@ -40,7 +41,7 @@ struct Message {
 #define BUFFER_LENGTH 10
 
 // function prototypes
-void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_length);
+void Produce(Message *buffer, unsigned long buffer_tail, unsigned long buffer_length);
 void Consume(Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length);
 void Show(Message buffer[BUFFER_LENGTH], unsigned long buffer_tail, unsigned long buffer_length);
 
@@ -105,22 +106,22 @@ int main()
 //   (2) position of the tail of the buffer
 //   (3) number of messages in the buffer
 // Returns: void
-void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_length)
+void Produce(Message *buffer, unsigned long buffer_tail, unsigned long buffer_length)
 {
 	time_t current_time;
 	unsigned long buffer_head;  // the head of the buffer in which to store the message
 
 								// find the element of the buffer in which to store the message
-	if (*buffer_length > BUFFER_LENGTH) {
-		buffer_head = *buffer_tail + *buffer_length - BUFFER_LENGTH;
+	if (buffer_length >= BUFFER_LENGTH) {
+		buffer_head = buffer_tail + buffer_length - BUFFER_LENGTH;
 		buffer_tail++;
 	}
 	else {
-		if (BUFFER_LENGTH < (*buffer_tail + *buffer_length)) {
-			buffer_head = *buffer_tail + *buffer_length - BUFFER_LENGTH;
+		if (BUFFER_LENGTH < (buffer_tail + buffer_length)) {
+			buffer_head = buffer_tail + buffer_length - BUFFER_LENGTH;
 		}
 		else {
-			buffer_head = *buffer_length + *buffer_tail;
+			buffer_head = buffer_length + buffer_tail;
 		}
 	}
 		// get the value of the data for the message from the user
@@ -133,7 +134,7 @@ void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_
 	buffer[buffer_head].time = current_time;
 
 		// if no buffer overflow has occurred, adjust the buffer length
-		if (BUFFER_LENGTH > *buffer_length) {
+		if (BUFFER_LENGTH > buffer_length) {
 			buffer_length++;
 		}
 
@@ -152,7 +153,7 @@ void Produce(Message *buffer, unsigned long *buffer_tail, unsigned long *buffer_
 //   (2) position of the tail of the buffer
 //   (3) number of messages in the buffer
 // Returns: void
-void Consume(struct Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length);
+void Consume(struct Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length)
 {
 	// if the buffer is empty, display an error statement
 	if (buffer_length == 0) {
@@ -199,4 +200,3 @@ void Show(Message buffer[BUFFER_LENGTH], unsigned long buffer_tail, unsigned lon
 		}
 	}
 }
-
