@@ -25,7 +25,6 @@
 // message is entered, this simply overwrites the last message at the tail of the buffer. 
 // This is termed an overflow.
 
-#include "stdafx.h"
 #include <iostream>
 #include <time.h>
 using namespace std;
@@ -41,7 +40,7 @@ struct Message {
 #define BUFFER_LENGTH 10
 
 // function prototypes
-void Produce(Message *buffer, unsigned long buffer_tail, unsigned long buffer_length);
+void Produce(Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length);
 void Consume(Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length);
 void Show(Message buffer[BUFFER_LENGTH], unsigned long buffer_tail, unsigned long buffer_length);
 
@@ -106,7 +105,7 @@ int main()
 //   (2) position of the tail of the buffer
 //   (3) number of messages in the buffer
 // Returns: void
-void Produce(Message *buffer, unsigned long buffer_tail, unsigned long buffer_length)
+void Produce(Message *buffer, unsigned long &buffer_tail, unsigned long &buffer_length)
 {
 	time_t current_time;
 	unsigned long buffer_head;  // the head of the buffer in which to store the message
@@ -124,25 +123,25 @@ void Produce(Message *buffer, unsigned long buffer_tail, unsigned long buffer_le
 			buffer_head = buffer_length + buffer_tail;
 		}
 	}
-		// get the value of the data for the message from the user
+	// get the value of the data for the message from the user
 	cout << "Enter your message here:";
 	cin >> buffer[buffer_head].data;
 	cout << endl << "Your message has been added to the buffer" << endl;
 
-		// get the value of the time for the message
+	// get the value of the time for the message
 	current_time = time(0);
 	buffer[buffer_head].time = current_time;
 
-		// if no buffer overflow has occurred, adjust the buffer length
-		if (BUFFER_LENGTH > buffer_length) {
-			buffer_length++;
-		}
+	// if no buffer overflow has occurred, adjust the buffer length
+	if (BUFFER_LENGTH > buffer_length) {
+		buffer_length++;
+	}
 
 
-		// if a buffer overflow has occurred, display an error statement
-		else {
-			cout << "Error: Buffer overflow, oldest entry has been overwritten" << endl;
-		}
+	// if a buffer overflow has occurred, display an error statement
+	else {
+		cout << "Error: Buffer overflow, oldest entry has been overwritten" << endl;
+	}
 }
 
 
@@ -160,10 +159,11 @@ void Consume(struct Message *buffer, unsigned long &buffer_tail, unsigned long &
 		cout << "Error: The buffer is empty)";
 	}
 
-		// if the buffer is not empty, display the message at the tail, remove the message by
-		// advancing the tail of buffer offset in a circular manner and adjust the buffer length
+	// if the buffer is not empty, display the message at the tail, remove the message by
+	// advancing the tail of buffer offset in a circular manner and adjust the buffer length
 	else {
 		cout << buffer[buffer_tail].data;
+		buffer[buffer_tail].data = NULL;
 		if (BUFFER_LENGTH <= buffer_tail) {
 			buffer_tail = 0;
 		}
@@ -192,10 +192,11 @@ void Show(Message buffer[BUFFER_LENGTH], unsigned long buffer_tail, unsigned lon
 		cout << "Error: The buffer is empty" << endl;
 	}
 
-		// if the buffer is not empty, display all the messages in the buffer
+	// if the buffer is not empty, display all the messages in the buffer
 	else {
-		for (count = 0, count < BUFFER_LENGTH; count++;) {
-			cout << "The messages in the buffer are as follows: " << endl;
+		cout << "The messages in the buffer are as follows: " << endl;
+		for (count = 0; count < BUFFER_LENGTH; count++)
+		{
 			cout << buffer[count].data << endl;
 		}
 	}
